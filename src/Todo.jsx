@@ -16,7 +16,7 @@ const Todo = ({ todo }) => {
             <div className={style.row}>
                 <input type='checkbox' />
                 <p className={style.text}>
-                    {todo}
+                    {todo.task}
                 </p>
             </div>
             <button>{<FaRegTrashAlt />}</button>

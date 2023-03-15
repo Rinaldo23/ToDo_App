@@ -1,5 +1,7 @@
+import { addDoc, collection } from 'firebase/firestore';
 import { useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
+import { db } from './firebase';
 import Todo from './Todo';
 
 const style = {
@@ -14,16 +16,33 @@ const style = {
 
 function App() {
 
-  const [todos, setTodos] = useState(['Learn React', 'Learn FireBase']);
+  const [todos, setTodos] = useState([]);
+  const [input, setInput] = useState('');
+
+  // Create todo
+  const createTask = async (e) => {
+    e.preventDefault(e);
+    if (input === '') {
+      alert('Please enter a Task!');
+      return;
+    }
+    await addDoc(collection(db, 'tasks'), {
+      task: input,
+      completed: false,
+    });
+    setInput('');
+  };
 
   return (
     <div className={style.bg}>
       <div className={style.container}>
         <h3 className={style.heading}>Todo App</h3>
-        <form className={style.form}>
+        <form onSubmit={createTask} className={style.form}>
           <input
             className={style.input}
             type='text'
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             placeholder='Add Todo'
           />
           <button className={style.button}>
@@ -38,9 +57,11 @@ function App() {
             />
           ))}
         </ul>
-        {todos.length < 1 ? "Please add some tasks!" : (
-          <p className={style.count}>{`You have ${todos.length} todos`}</p>
-        )}
+        <div className='flex justify-center pt-2'>
+          {todos.length < 1 ? "Please add some tasks!" : (
+            <p className={style.count}>{`You have ${todos.length} todos`}</p>
+          )}
+        </div>
       </div>
     </div>
   );
