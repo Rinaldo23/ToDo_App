@@ -1,5 +1,5 @@
-import { addDoc, collection } from 'firebase/firestore';
-import { useState } from 'react';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { db } from './firebase';
 import Todo from './Todo';
@@ -33,6 +33,33 @@ function App() {
     setInput('');
   };
 
+  // Read todo from firebase
+  useEffect(() => {
+    const q = query(collection(db, "tasks"));
+
+    const getData = async () => {
+      const querySnapshot = await getDocs(q);
+      let tasksArr = [];
+      querySnapshot.forEach((doc) => {
+        tasksArr.push({ ...doc.data(), id: doc.id });
+      });
+      setTodos(tasksArr);
+    }
+    return () => getData();
+  }, [input]);
+
+  // Delete todo
+  const deleteTask = async (id) => {
+    await deleteDoc(doc(db, 'tasks', id));
+  };
+
+  // Update todo in firebase
+  const updateTask = async (todo) => {
+    await updateDoc(doc(db, 'tasks', todo.id), {
+      completed: !todo.completed,
+    });
+  };
+
   return (
     <div className={style.bg}>
       <div className={style.container}>
@@ -54,6 +81,8 @@ function App() {
             <Todo
               key={index}
               todo={todo}
+              deleteTask={deleteTask}
+              updateTask={updateTask}
             />
           ))}
         </ul>
