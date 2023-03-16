@@ -5,12 +5,12 @@ import { db } from './firebase';
 import Todo from './Todo';
 
 const style = {
-  bg: `h-screen w-screen p-4 bg-gradient-to-r from-[#2F80ED] to-[#1CB5E0]`,
-  container: `bg-slate-100 max-w-[500px] w-full m-auto rounded-md shadow-xl p-4`,
+  bg: `h-screen w-screen p-4 bg-gradient-to-b from-[#2F80ED] `,
+  container: `bg-slate-100 max-w-[500px] w-full m-auto rounded-2xl shadow-xl p-4`,
   heading: `text-3xl font-bold text-center text-gray-800 p-2`,
   form: `flex justify-between`,
-  input: `border p-2 w-full text-xl`,
-  button: `border p-4 ml-2 bg-purple-500 text-slate-100`,
+  input: `border px-6 w-full text-xl rounded-2xl`,
+  button: `border p-4 ml-2 bg-purple-500 text-slate-100 rounded-2xl hover:bg-blue-400`,
   count: `text-center p-2`,
 };
 
@@ -69,7 +69,7 @@ function App() {
             type='text'
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder='Add Todo'
+            placeholder='Add a task'
           />
           <button className={style.button}>
             <AiOutlinePlus size={30} />
@@ -86,7 +86,7 @@ function App() {
           ))}
         </ul>
         <div className='flex justify-center pt-2'>
-          {todos.length < 1 ? "Please add some tasks!" : (
+          {todos.length < 1 ? "You have no tasks!!" : (
             <p className={style.count}>{`You have ${todos.length} todos`}</p>
           )}
         </div>
