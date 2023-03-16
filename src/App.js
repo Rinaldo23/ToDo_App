@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { db } from './firebase';
@@ -19,7 +19,7 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState('');
 
-  // Create todo
+  // Create a task and add to fireStore
   const createTask = async (e) => {
     e.preventDefault(e);
     if (input === '') {
@@ -28,30 +28,29 @@ function App() {
     }
     await addDoc(collection(db, 'tasks'), {
       task: input,
-      completed: false,
+      completed: false
     });
     setInput('');
   };
 
-  // Read todo from firebase
-  useEffect(() => {
-    const q = query(collection(db, "tasks"));
-
-    const getData = async () => {
-      const querySnapshot = await getDocs(q);
-      let tasksArr = [];
-      querySnapshot.forEach((doc) => {
-        tasksArr.push({ ...doc.data(), id: doc.id });
-      });
-      setTodos(tasksArr);
-    }
-    return () => getData();
-  }, [input]);
-
   // Delete todo
-  const deleteTask = async (id) => {
-    await deleteDoc(doc(db, 'tasks', id));
+  const deleteTask = async (todo) => {
+    await deleteDoc(doc(db, 'tasks', todo.id));
   };
+
+  // Read tasks from firebase/fireStore
+  useEffect(() => {
+    const q = query(collection(db, 'tasks'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      let todosArr = [];
+      querySnapshot.forEach((doc) => {
+        todosArr.push({ ...doc.data(), id: doc.id });
+      });
+      setTodos(todosArr);
+    });
+    return () => unsubscribe();
+  }, []);
+
 
   // Update todo in firebase
   const updateTask = async (todo) => {
@@ -77,7 +76,7 @@ function App() {
           </button>
         </form>
         <ul>
-          {todos.map((todo, index) => (
+          {todos?.map((todo, index) => (
             <Todo
               key={index}
               todo={todo}

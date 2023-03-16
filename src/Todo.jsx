@@ -10,7 +10,7 @@ const style = {
     button: `cursor-pointer flex items-center`,
 };
 
-const Todo = ({ todo, deleteTask, updateTask }) => {
+const task = ({ todo, deleteTask, updateTask }) => {
     return (
         <li className={todo.completed ? style.liComplete : style.li}>
             <div className={style.row}>
@@ -19,9 +19,9 @@ const Todo = ({ todo, deleteTask, updateTask }) => {
                     {todo.task}
                 </p>
             </div>
-            <button onClick={() => deleteTask(todo.id)}>{<FaRegTrashAlt />}</button>
+            <button onClick={() => deleteTask(todo)}>{<FaRegTrashAlt />}</button>
         </li>
     );
 };
 
-export default Todo;
+export default task;
